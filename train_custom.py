@@ -1,20 +1,10 @@
+# YOLO26n trained from scratch on DocLayNet
+
 import os
 from ultralytics import YOLO
 import comet_ml #logging hyprparameters
 def main():
-
-    # ---- Comet Experiment ----
-    # experiment = Experiment(
-    #     api_key=os.getenv("COMET_API_KEY"),   # safer than hardcoding
-    #     project_name="doclaynet-yolo",
-    #     workspace="your_workspace_name",
-    #     auto_output_logging="simple",
-    # )
-
-    # ---- model ----
     model = YOLO("yolo26n.yaml")
-
-    # ---- log hyperparameters ----
     hyperparams = {
         "epochs": 50,
         "imgsz": 640,
@@ -28,11 +18,9 @@ def main():
     }
 
     # experiment.log_parameters(hyperparams)
-
-    # ---- training ----
     results = model.train(
         data="doclaynet.yaml",
-        epochs=50,
+        epochs=100,
         imgsz=640,
         batch=-1,
         device=0,
@@ -58,14 +46,14 @@ def main():
         auto_augment="autoaugment",
         close_mosaic=20,
 
-        patience=20,
+        patience=20, #EARLY STOPPING
         cos_lr=True,
         amp=True,
         cache=False,  
         # workers=4,    # Avoid multiprocessing crashes
 
         project="/run/media/akshajtiwari/5438E16938E14B16/yolo26_doclaynet",
-        name="exp1",
+        name="M1_scratch_real_aug",
         save=True,
         save_period=2,
         resume=False
@@ -73,6 +61,6 @@ def main():
 
     # experiment.end()
 
-comet_ml.init()
+comet_ml.login()
 if __name__ == "__main__":
     main()
